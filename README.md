@@ -31,3 +31,7 @@ $ symfony serve
 ### Sandbox
 
 The API can be tested using the sandbox: https://localhost:8000/api/doc (by default)
+
+### Authentication
+
+A header `X-API-KEY` must be provided for each API call. Your API key is: `mustBeASecret`
