@@ -27,3 +27,7 @@ $ bin/console doctrine:fixtures:load
 ```
 $ symfony serve
 ```
+
+### Sandbox
+
+The API can be tested using the sandbox: https://localhost:8000/api/doc (by default)

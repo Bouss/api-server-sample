@@ -45,7 +45,7 @@ class Ingredient implements Stringable, TranslatableInterface
      * @ORM\Column(type="float")
      * @Assert\NotBlank(message="Cost cannot be blank")
      * @Assert\Type(type="float", message="Cost must be a float")
-     * @Groups({"api_ingredient"})
+     * @Groups({"api_ingredient", "api_pizza"})
      */
     private $cost;
 

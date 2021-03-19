@@ -6,10 +6,10 @@ use App\Entity\Ingredient;
 use App\Entity\Pizza;
 use App\Entity\PizzaIngredient;
 use App\Form\Type\PizzaIngredientType;
-use App\Repository\IngredientRepository;
 use App\Repository\PizzaIngredientRepository;
-use App\Repository\PizzaRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,16 +22,47 @@ use Symfony\Component\Routing\Annotation\Route;
 class PizzaIngredientApiController extends AbstractController
 {
     public function __construct(
-        private PizzaRepository $pizzaRepository,
-        private PizzaIngredientRepository $pizzaIngredientRepository,
-        private IngredientRepository $ingredientRepository,
-        private EntityManagerInterface $em
+        private EntityManagerInterface $em,
+        private PizzaIngredientRepository $pizzaIngredientRepository
     ) {}
 
     /**
      * Adds an ingredient to a pizza
      *
      * @Route("/{id}/ingredients", methods="POST", format="json", name="api_pizza_ingredient_add")
+     *
+     * @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     description="The pizza ID",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\RequestBody(
+     *     description="Input data format",
+     *     @OA\MediaType(
+     *         mediaType="application/x-www-form-urlencoded",
+     *         @OA\Schema(
+     *             type="object",
+     *             required={"ingredient", "order"},
+     *             @OA\Property(
+     *                 property="ingredient",
+     *                 description="The ID of the ingredient to add",
+     *                 type="integer"
+     *             ),
+     *             @OA\Property(
+     *                 property="order",
+     *                 description="The order of the ingredient to add",
+     *                 type="integer"
+     *             )
+     *         )
+     *     )
+     * )
+     * @OA\Response(
+     *     response=201,
+     *     description="Returns the created pizza",
+     *     @OA\JsonContent(ref=@Model(type=Pizza::class, groups={"api_pizza"}))
+     * )
+     * @OA\Tag(name="pizzas")
      */
     public function add(Request $request, Pizza $pizza): JsonResponse
     {
@@ -52,7 +83,42 @@ class PizzaIngredientApiController extends AbstractController
     /**
      * Changes the order of an ingredient in a pizza
      *
-     * @Route("/{pizza}/ingredients/{ingredient}" methods="PUT", format="json", name="api_pizza_ingredient_edit")
+     * @Route("/{pizza}/ingredients/{ingredient}", methods="PUT", format="json", name="api_pizza_ingredient_edit")
+     *
+     * @OA\Parameter(
+     *     name="pizza",
+     *     in="path",
+     *     description="The pizza ID",
+     *     required=true,
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter(
+     *     name="ingredient",
+     *     in="path",
+     *     description="The ingredient ID",
+     *     required=true,
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\RequestBody(
+     *     description="Input data format",
+     *     @OA\MediaType(
+     *         mediaType="application/x-www-form-urlencoded",
+     *         @OA\Schema(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="order",
+     *                 description="The new order of the ingredient in the pizza",
+     *                 type="integer"
+     *             )
+     *         )
+     *     )
+     * )
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns the updated pizza",
+     *     @OA\JsonContent(ref=@Model(type=Pizza::class, groups={"api_pizza"}))
+     * )
+     * @OA\Tag(name="pizzas")
      */
     public function edit(Request $request, Pizza $pizza, Ingredient $ingredient): JsonResponse
     {
@@ -80,6 +146,25 @@ class PizzaIngredientApiController extends AbstractController
      * Deletes an ingredient from a pizza
      *
      * @Route("/{pizza}/ingredients/{ingredient}", methods="DELETE", format="json", name="api_pizza_ingredient_delete")
+     *
+     * @OA\Parameter(
+     *     name="pizza",
+     *     in="path",
+     *     description="The pizza ID",
+     *     required=true,
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter(
+     *     name="ingredient",
+     *     in="path",
+     *     description="The ingredient ID",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns {deleted: true}"
+     * )
+     * @OA\Tag(name="pizzas")
      */
     public function delete(Pizza $pizza, Ingredient $ingredient): JsonResponse
     {
