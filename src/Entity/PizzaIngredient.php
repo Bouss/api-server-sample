@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -37,6 +38,7 @@ class PizzaIngredient
      * @ORM\ManyToOne(targetEntity="Ingredient", cascade={"persist"}, fetch="EAGER")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Assert\NotBlank(message="Ingredient cannot be blank")
+     * @Groups({"api_pizza"})
      */
     private Ingredient $ingredient;
 
@@ -46,6 +48,7 @@ class PizzaIngredient
      * @ORM\Column(name="`order`", type="integer", options={"default": 1})
      * @Assert\NotBlank(message="Order cannot be blank")
      * @Assert\Type(type="integer", message="Order must be an integer")
+     * @Groups({"api_pizza"})
      */
     private $order = 1;
 

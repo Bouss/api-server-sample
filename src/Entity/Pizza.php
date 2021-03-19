@@ -10,6 +10,8 @@ use Knp\DoctrineBehaviors\Contract\Entity\TranslatableInterface;
 use Knp\DoctrineBehaviors\Model\Translatable\TranslatableTrait;
 use Stringable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -26,6 +28,7 @@ class Pizza implements Stringable, TranslatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"api_pizza"})
      */
     private int $id;
 
@@ -37,6 +40,7 @@ class Pizza implements Stringable, TranslatableInterface
      * @ORM\Column(type="string", unique=true)
      * @Assert\NotBlank(message="Slug cannot be blank")
      * @Assert\Regex(pattern="/^[-a-z]+$/", message="Slug must be a lowercase slug")
+     * @Groups({"api_pizza"})
      */
     private $slug;
 
@@ -50,8 +54,17 @@ class Pizza implements Stringable, TranslatableInterface
      *
      * @ORM\OneToMany(targetEntity="PizzaIngredient", mappedBy="pizza", cascade={"persist", "remove"})
      * @ORM\OrderBy({"order" = "ASC"})
+     * @Groups({"api_pizza"})
+     * @SerializedName("ingredients")
      */
     private $pizzaIngredients;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @Groups({"api_pizza"})
+     */
+    protected $translations;
 
     public function __construct()
     {
@@ -84,13 +97,13 @@ class Pizza implements Stringable, TranslatableInterface
     /**
      * @return PizzaIngredient[]|Collection
      */
-    public function getPizzaIngredients(): Collection
+    public function getPizzaIngredients()
     {
         return $this->pizzaIngredients;
     }
 
     /**
-     * @return PizzaIngredient[]|Collection
+     * @param PizzaIngredient[]|Collection
      */
     public function setPizzaIngredients($pizzaIngredients): Pizza
     {
@@ -139,6 +152,9 @@ class Pizza implements Stringable, TranslatableInterface
         return $this;
     }
 
+    /**
+     * @Groups({"api_pizza"})
+     */
     public function getPrice(): float
     {
         $ingredientCosts = $this->pizzaIngredients->map(static function(PizzaIngredient $pizzaIngredient) {

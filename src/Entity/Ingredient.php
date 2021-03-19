@@ -8,6 +8,7 @@ use Knp\DoctrineBehaviors\Contract\Entity\TranslatableInterface;
 use Knp\DoctrineBehaviors\Model\Translatable\TranslatableTrait;
 use Stringable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -22,6 +23,7 @@ class Ingredient implements Stringable, TranslatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"api_ingredient", "api_pizza"})
      */
     private int $id;
 
@@ -33,6 +35,7 @@ class Ingredient implements Stringable, TranslatableInterface
      * @ORM\Column(type="string", unique=true)
      * @Assert\NotBlank(message="Slug cannot be blank")
      * @Assert\Regex(pattern="/^[-a-z]+$/", message="Slug must be a lowercase slug")
+     * @Groups({"api_ingredient", "api_pizza"})
      */
     private $slug;
 
@@ -42,8 +45,16 @@ class Ingredient implements Stringable, TranslatableInterface
      * @ORM\Column(type="float")
      * @Assert\NotBlank(message="Cost cannot be blank")
      * @Assert\Type(type="float", message="Cost must be a float")
+     * @Groups({"api_ingredient"})
      */
     private $cost;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @Groups({"api_ingredient", "api_pizza"})
+     */
+    protected $translations;
 
     /**
      * @ORM\Column(type="datetime")

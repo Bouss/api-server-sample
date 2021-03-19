@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Knp\DoctrineBehaviors\Contract\Entity\TranslationInterface;
 use Knp\DoctrineBehaviors\Model\Translatable\TranslationTrait;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity
@@ -22,6 +23,7 @@ class IngredientTranslation implements TranslationInterface
 
     /**
      * @ORM\Column(type="string")
+     * @Groups({"api_ingredient", "api_pizza"})
      */
     private string $name;
 
